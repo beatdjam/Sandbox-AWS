@@ -58,3 +58,20 @@ module "codebuild_role" {
   identifier = "codebuild.amazonaws.com"
   policy     = data.aws_iam_policy_document.codebuild.json
 }
+
+resource "aws_codebuild_project" "example" {
+  name         = "example"
+  service_role = module.codebuild_role.iam_role_arn
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+  environment {
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    image           = "aws/codebuild/standard:2.0"
+    type            = "LINUX_CONTAINER"
+    privileged_mode = true
+  }
+  source {
+    type = "CODEPIPELINE"
+  }
+}
